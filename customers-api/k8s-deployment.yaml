@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-api
+  namespace: cafe-aurora
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customers-api
+  template:
+    metadata:
+      labels:
+        app: customers-api
+    spec:
+      containers:
+      - name: customers-api
+        image: customers-api:latest
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customers-api
+  namespace: cafe-aurora
+spec:
+  selector:
+    app: customers-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
